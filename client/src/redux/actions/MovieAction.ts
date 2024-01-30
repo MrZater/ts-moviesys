@@ -67,7 +67,11 @@ function deleteAction(id: string): DeleteAction {
 // 所有的action
 export type MovieActions = SaveMoviesAction | SetConditionAction | SetLoadingAction | DeleteAction
 
-// 根据条件从服务器获取电影的数据
+/**
+ * 根据条件从服务器获取电影的数据
+ * @param condition 
+ * @returns 
+ */
 function fetchMovies(condition: ISearchCondition)
     : ThunkAction<Promise<void>, IRootState, any, MovieActions> {
     return async (dispatch, getState) => {
@@ -101,6 +105,7 @@ function deleteMovie(id: string)
         if (resp.data) {
             dispatch(deleteAction(id))
         }
+        // 3.设置加载状态
         dispatch(setLoadingAction(false))
     }
 }

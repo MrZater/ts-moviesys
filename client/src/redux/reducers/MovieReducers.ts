@@ -24,6 +24,7 @@ export interface IMovieState {
      * 是否正在加载
      */
     isLoading: boolean
+    totalPage: number
 }
 
 // 默认状态
@@ -35,7 +36,8 @@ const defaultState: IMovieState = {
         key: ''
     },
     total: 0,
-    isLoading: false
+    isLoading: false,
+    totalPage: 0
 }
 
 type MovieReducer<A> = IReducer<IMovieState, A>
@@ -49,7 +51,8 @@ const saveMovie: MovieReducer<SaveMoviesAction> = function (state, action) {
     return {
         ...state,
         data: action.payload.movies,
-        total: action.payload.total
+        total: action.payload.total,
+        totalPage: Math.ceil(action.payload.total / state.condition.limit)
     }
 }
 /**
@@ -59,13 +62,15 @@ const saveMovie: MovieReducer<SaveMoviesAction> = function (state, action) {
  * @returns 
  */
 const setCondition: MovieReducer<SetConditionAction> = function (state, action) {
-    return {
+    const newState = {
         ...state,
         condition: {
             ...state.condition,
             ...action.payload
         }
     }
+    newState.totalPage = Math.ceil(newState.total / newState.condition.limit)
+    return newState
 }
 /**
  * 
@@ -77,7 +82,8 @@ const deleteMovie: MovieReducer<DeleteAction> = function (state, action) {
     return {
         ...state,
         data: state.data.filter(item => item._id !== action.payload),
-        total: state.total - 1
+        total: state.total - 1,
+        totalPage: Math.ceil((state.total - 1) / state.condition.limit)
     }
 }
 
@@ -96,7 +102,7 @@ const setLoading: MovieReducer<SetLoadingAction> = function (state, action) {
 
 
 
-export function MovieReduces (state: IMovieState = defaultState, action: MovieActions) {
+export function MovieReduces(state: IMovieState = defaultState, action: MovieActions) {
     switch (action.type) {
         case 'movie_delete':
             return deleteMovie(state, action)

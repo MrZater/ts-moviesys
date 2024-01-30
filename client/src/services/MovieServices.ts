@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2023-12-16 19:26:12
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-01-30 15:08:00
+ * @LastEditTime: 2024-01-30 18:00:02
  * @FilePath: /client/src/services/MovieServices.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -33,26 +33,31 @@ export interface IMovie {
 const baseUrl = 'http://127.0.0.1:3000'
 
 export class MovieServices {
+    // 添加电影请求方法
     public static async add(movie: IMovie): Promise<IResponseData<IMovie> | IResponseError> {
         const { data = {} } = await axios.post(`${baseUrl}/api/movie`, movie)
         return data;
     }
 
+    // 修改电影请求方法
     public static async edit(id: string, movie: IMovie): Promise<IResponseData<true> | IResponseError> {
         const { data = {} } = await axios.put(`${baseUrl}/api/movie/` + id, movie)
         return data
     }
 
+    // 删除电影请求方法
     public static async delete(id: string): Promise<IResponseData<true> | IResponseError> {
         const { data = {} } = await axios.put(`${baseUrl}/api/movie/` + id)
         return data
     }
 
+    // 通过id查询电影请求方法
     public static async getMovieById(id: string): Promise<IMovie | null> {
         const { data = {} } = await axios.get(`${baseUrl}/api/movie/` + id)
         return data
     }
 
+    // 获取电影数组请求方法
     public static async getMovies(condition: ISearchCondition): Promise<IResponsePageData<IMovie> | IResponseError> {
         const { data = {} } = await axios.get(`${baseUrl}/api/movie`, {
             params: condition
