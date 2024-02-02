@@ -2,19 +2,23 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2024-01-31 17:25:45
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-02 11:56:24
+ * @LastEditTime: 2024-02-02 15:58:11
  * @FilePath: /client/src/components/MovieTable/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React from "react";
 import { IMovieState } from "../../redux/reducers/MovieReducers";
-import { Switch, Table, TableColumnProps, Tag } from 'antd'
+import { Switch, Table, TableColumnProps, Tag, Button, message, Popconfirm, TablePaginationConfig } from 'antd'
 import { IMovie } from "../../services/MovieServices";
 import DefaultPoster from '../../assets/images/defaultposter.png'
 import { SwitchType } from "../../services/CommonTypes";
+import { NavLink } from "react-router-dom";
+import { IRootState } from "../../redux/reducers/RootReducer";
 export interface IMovieTableEvents {
     onLoad: () => void
     onSwitchChange: (type: SwitchType, newVal: boolean, id: string) => void
+    onDelete: (id: string) => Promise<void>
+    onChange: (newPage: number, newLimit: number, props?: IRootState['movie']) => void
 }
 
 class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
@@ -81,7 +85,7 @@ class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
                 title: '即将上映',
                 dataIndex: 'isComing',
                 render: (text: IMovie['isComing'], record) => {
-                    return <Switch defaultChecked={text} onChange={(checked: boolean) => {
+                    return <Switch size="small" defaultChecked={text} onChange={(checked: boolean) => {
                         if (this.props.onSwitchChange) {
                             this.props.onSwitchChange(SwitchType.isComing, checked, record._id)
                         }
@@ -92,7 +96,7 @@ class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
                 title: '正在热映',
                 dataIndex: 'isHot',
                 render: (text: IMovie['isHot'], record) => {
-                    return <Switch defaultChecked={text} onChange={(checked: boolean) => {
+                    return <Switch size="small" defaultChecked={text} onChange={(checked: boolean) => {
                         if (this.props.onSwitchChange) {
                             this.props.onSwitchChange(SwitchType.isHot, checked, record._id)
                         }
@@ -103,19 +107,62 @@ class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
                 title: '经典影片',
                 dataIndex: 'isClassic',
                 render: (text: IMovie['isClassic'], record) => {
-                    return <Switch defaultChecked={text} onChange={(checked: boolean) => {
+                    return <Switch size="small" defaultChecked={text} onChange={(checked: boolean) => {
                         if (this.props.onSwitchChange) {
                             this.props.onSwitchChange(SwitchType.isClassic, checked, record._id)
                         }
                     }} />
                 }
+            },
+            {
+                title: '操作',
+                dataIndex: '_id',
+                render: (text: IMovie['_id'], record) => {
+                    return (
+                        <div>
+                            <NavLink to={'/movie/edit/' + text}>
+                                <Button size="small" type="link">编辑</Button>
+                            </NavLink>
+                            <Popconfirm
+                                title="确定删除该电影嘛？"
+                                onConfirm={async () => {
+                                    await this.props.onDelete(text)
+                                    message.success('删除成功！')
+                                }}
+                                okText="确定"
+                                cancelText="取消"
+                            >
+                                <Button size="small" type="link" style={{ color: 'red' }}>删除</Button>
+                            </Popconfirm>
+                        </div>
+                    )
+                }
             }
         ]
+    }
+
+    getPageConfig(): false | TablePaginationConfig {
+        if (this.props.data.length === 0) {
+            return false
+        }
+        console.log({
+            current: this.props.condition.page,
+            pageSize: this.props.condition.limit,
+            total: this.props.total,
+        })
+        return {
+            current: this.props.condition.page,
+            pageSize: this.props.condition.limit,
+            total: this.props.total,
+        }
+    }
+    handleChange(pagination: TablePaginationConfig) {
+        this.props.onChange(pagination.current!, pagination.pageSize!,this.props)
     }
     render(): React.ReactNode {
         const dataList = this.props.data
         return (
-            <Table rowKey={(record) => record._id} dataSource={dataList} columns={this.getColumns()}></Table>
+            <Table loading={this.props.isLoading} pagination={this.getPageConfig()} onChange={this.handleChange.bind(this)} rowKey={(record) => record._id} dataSource={dataList} columns={this.getColumns()}></Table>
         )
     }
 }

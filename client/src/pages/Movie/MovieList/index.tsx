@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2024-01-30 19:30:24
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-02 12:00:36
+ * @LastEditTime: 2024-02-02 15:56:24
  * @FilePath: /client/src/pages/Movie/MovieList/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -29,6 +29,16 @@ function mapDispatchToProps(dispatch: Dispatch<any>): IMovieTableEvents {
         },
         onSwitchChange: (type: SwitchType, newState: boolean, id: string) => {
             dispatch(MovieAction.changeSwitch(type, newState, id))
+        },
+        onDelete: async (id: string) => {
+            await dispatch(MovieAction.deleteMovie(id))
+        },
+        onChange: (page, limit, props) => {
+            dispatch(MovieAction.saveMoviesAction(props!.data, props!.total))
+            dispatch(MovieAction.fetchMovies({
+                page,
+                limit
+            }))
         }
     }
 }

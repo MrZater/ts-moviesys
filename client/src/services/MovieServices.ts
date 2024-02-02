@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2023-12-16 19:26:12
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-02 11:48:24
+ * @LastEditTime: 2024-02-02 15:32:53
  * @FilePath: /client/src/services/MovieServices.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -47,7 +47,7 @@ export class MovieServices {
 
     // 删除电影请求方法
     public static async delete(id: string): Promise<IResponseData<true> | IResponseError> {
-        const { data = {} } = await axios.put(`${baseUrl}/api/movie/` + id)
+        const { data = {} } = await axios.delete(`${baseUrl}/api/movie/` + id)
         return data
     }
 
