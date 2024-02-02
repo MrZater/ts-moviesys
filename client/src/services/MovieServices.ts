@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2023-12-16 19:26:12
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-01-30 18:00:02
+ * @LastEditTime: 2024-02-02 11:48:24
  * @FilePath: /client/src/services/MovieServices.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,7 +10,7 @@ import axios from "axios";
 import { IResponseData, IResponseError, IResponsePageData, ISearchCondition } from "./CommonTypes";
 
 export interface IMovie {
-    _id?: string;
+    _id: string;
     // 电影名
     name: string;
     // 电影类型
@@ -40,7 +40,7 @@ export class MovieServices {
     }
 
     // 修改电影请求方法
-    public static async edit(id: string, movie: IMovie): Promise<IResponseData<true> | IResponseError> {
+    public static async edit(id: string, movie: Partial<IMovie>): Promise<IResponseData<true> | IResponseError> {
         const { data = {} } = await axios.put(`${baseUrl}/api/movie/` + id, movie)
         return data
     }

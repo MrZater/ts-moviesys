@@ -1,4 +1,4 @@
-import { IResponseData, IResponseError, IResponsePageData, ISearchCondition } from "../../services/CommonTypes";
+import { IResponseData, IResponseError, IResponsePageData, ISearchCondition, SwitchType } from "../../services/CommonTypes";
 import { IMovie, MovieServices } from "../../services/MovieServices";
 import { IRootState } from "../reducers/RootReducer";
 import { IAction } from "./ActionTypes";
@@ -64,8 +64,27 @@ function deleteAction(id: string): DeleteAction {
     }
 }
 
+export type MovieChangeSwitchAction = IAction<'movie_switch', {
+    type: SwitchType,
+    newVal: boolean,
+    id: string
+}>
+function changeSwitchAction(type: SwitchType, newVal: boolean, id: string): MovieChangeSwitchAction {
+    return {
+        type: 'movie_switch',
+        payload: {
+            type,
+            newVal,
+            id
+        }
+    }
+}
+
+
+
 // 所有的action
-export type MovieActions = SaveMoviesAction | SetConditionAction | SetLoadingAction | DeleteAction
+export type MovieActions = SaveMoviesAction | SetConditionAction | SetLoadingAction | DeleteAction | MovieChangeSwitchAction
+
 
 /**
  * 根据条件从服务器获取电影的数据
@@ -92,7 +111,12 @@ function fetchMovies(condition: ISearchCondition)
         dispatch(setLoadingAction(false))
     }
 }
-
+/*
+ * 删除对应id的电影
+ * 
+ * @param {string} id 
+ * @returns {ThunkAction<Promise<void>, IRootState, any, MovieActions>} 
+* */
 function deleteMovie(id: string)
     : ThunkAction<Promise<void>, IRootState, any, MovieActions> {
     return async (dispatch, getState) => {
@@ -100,7 +124,7 @@ function deleteMovie(id: string)
         dispatch(setLoadingAction(true))
         // 2.删除对应电影
         // 删除远程数据
-        const resp:IResponseData<true>|IResponseError = await MovieServices.delete(id)
+        const resp: IResponseData<true> | IResponseError = await MovieServices.delete(id)
         // 删除本地数据
         if (resp.data) {
             dispatch(deleteAction(id))
@@ -110,13 +134,37 @@ function deleteMovie(id: string)
     }
 }
 
+/*
+ * switch开关触发
+ * 
+ * @param {SwitchType} type 
+ * @param {boolean} newValue 
+ * @param {string} id 
+ * @returns {ThunkAction<Promise<void>, IRootState, any, MovieActions>} 
+* */
+function changeSwitch(type: SwitchType, newValue: boolean, id: string)
+    : ThunkAction<Promise<void>, IRootState, any, MovieActions> {
+    return async (dispatch, getState) => {
+        // 1. 改变加载状态
+        dispatch(setLoadingAction(true))
+        dispatch(changeSwitchAction(type, newValue, id))
+        await MovieServices.edit(id, {
+            [type]: newValue
+        })
+        dispatch(setLoadingAction(false))
+    }
+
+}
+
 const MovieAction = {
     saveMoviesAction,
     setLoadingAction,
     setConditionAction,
     deleteAction,
     fetchMovies,
-    deleteMovie
+    deleteMovie,
+    changeSwitch,
+    changeSwitchAction
 }
 
 export default MovieAction

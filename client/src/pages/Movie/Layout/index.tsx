@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2024-01-31 12:07:16
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-01-31 17:11:12
+ * @LastEditTime: 2024-01-31 18:40:29
  * @FilePath: /client/src/pages/Movie/Layout/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,9 +12,32 @@ import Home from "../Home";
 import MovieList from "../MovieList";
 import AddMovie from "../AddMovie";
 import EditMovie from "../EditMovie";
-import { Layout, Menu } from 'antd'
+import { Layout, Menu, MenuProps } from 'antd'
 import './index.css'
 const { Header, Sider, Content } = Layout;
+// menu每一项必传
+type MenuItem = Required<MenuProps>['items'][number];
+// 
+function getItem(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    type?: 'group',
+): MenuItem {
+    return {
+        key,
+        icon,
+        children,
+        label,
+        type,
+    } as MenuItem;
+}
+const items: MenuProps['items'] = [
+    getItem(<NavLink to='/'>首页</NavLink>, '1'),
+    getItem(<NavLink to='/movie'>电影列表</NavLink>, '2'),
+    getItem(<NavLink to='/movie/add'>电影添加</NavLink>, '3'),
+]
 
 const _Layout: React.FC = function () {
     return (<div className="layout-container">
@@ -24,16 +47,7 @@ const _Layout: React.FC = function () {
             </Header>
             <Layout>
                 <Sider theme="light">
-                    <Menu defaultSelectedKeys={['1']} mode="inline" theme="light">
-                        <Menu.Item key={'1'}>
-                            <NavLink to='/'>首页</NavLink>
-                        </Menu.Item>
-                        <Menu.Item key={'2'}>
-                            <NavLink to='/movie'>电影列表</NavLink>
-                        </Menu.Item>
-                        <Menu.Item key={'3'}>
-                            <NavLink to='/movie/add'>电影添加</NavLink>
-                        </Menu.Item>
+                    <Menu items={items} defaultSelectedKeys={['1']} mode="inline" theme="light">
                     </Menu>
                 </Sider>
                 <Content>

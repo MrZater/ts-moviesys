@@ -2,7 +2,7 @@
 
 import { ISearchCondition } from "../../services/CommonTypes";
 import { IMovie } from "../../services/MovieServices";
-import { DeleteAction, MovieActions, SaveMoviesAction, SetConditionAction, SetLoadingAction } from "../actions/MovieAction";
+import { DeleteAction, MovieActions, MovieChangeSwitchAction, SaveMoviesAction, SetConditionAction, SetLoadingAction } from "../actions/MovieAction";
 import { IReducer } from "./ReducerTypes";
 
 export type IMovieCondition = Required<ISearchCondition>
@@ -100,6 +100,27 @@ const setLoading: MovieReducer<SetLoadingAction> = function (state, action) {
     }
 }
 
+/**
+ * 修改switch状态
+ * @param state 
+ * @param action 
+ * @returns 
+ */
+const changeSwitch: MovieReducer<MovieChangeSwitchAction> = function (state, action) {
+    return {
+        ...state,
+        data: state.data.map(item => {
+            if (item._id === action.payload.id) {
+                return {
+                    ...item,
+                    [action.payload.type]: action.payload.newVal
+                }
+            }
+            return item
+        })
+    }
+}
+
 
 
 export function MovieReduces(state: IMovieState = defaultState, action: MovieActions) {
@@ -112,6 +133,8 @@ export function MovieReduces(state: IMovieState = defaultState, action: MovieAct
             return setLoading(state, action)
         case 'movie_setCondition':
             return setCondition(state, action)
+        case 'movie_switch': 
+            return changeSwitch(state, action)
         default:
             return state
     }
