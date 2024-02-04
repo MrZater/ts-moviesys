@@ -7,7 +7,10 @@
     "rules": {
         "no-empty": false,
         "no-console": false,
-        "interface-name": true
+        "interface-name": true,
+        "no-var-requires": false,
+        "no-trailing-whitespace": false,
+        "jsdoc-format": false
     },
     "rulesDirectory": []
 }

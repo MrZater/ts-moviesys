@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2023-12-16 19:26:12
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-02 15:32:53
+ * @LastEditTime: 2024-02-04 14:13:06
  * @FilePath: /client/src/services/MovieServices.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -30,7 +30,7 @@ export interface IMovie {
     // 封面
     poster?: string;
 }
-const baseUrl = 'http://127.0.0.1:3000'
+export const baseUrl = 'http://127.0.0.1:3000'
 
 export class MovieServices {
     // 添加电影请求方法

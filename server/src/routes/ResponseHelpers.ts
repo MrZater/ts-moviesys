@@ -20,7 +20,7 @@ export class ResponseHelper {
         // 完成响应
         res.send({
             data: null,
-            error: err
+            err
         })
     }
     /*
@@ -35,7 +35,7 @@ export class ResponseHelper {
     public static sendData(data: any, res: Response) {
         res.send({
             code: 200,
-            data: data
+            data
         })
     }
 
