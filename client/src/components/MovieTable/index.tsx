@@ -2,14 +2,14 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2024-01-31 17:25:45
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-04 12:24:03
+ * @LastEditTime: 2024-02-04 18:51:34
  * @FilePath: /client/src/components/MovieTable/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React from "react";
 import { IMovieState } from "../../redux/reducers/MovieReducers";
 import { Switch, Table, TableColumnProps, Tag, Button, message, Popconfirm, TablePaginationConfig, Input } from 'antd'
-import { IMovie } from "../../services/MovieServices";
+import { IMovie, baseUrl } from "../../services/MovieServices";
 import DefaultPoster from '../../assets/images/defaultposter.png'
 import { SwitchType } from "../../services/CommonTypes";
 import { NavLink } from "react-router-dom";
@@ -52,7 +52,7 @@ class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
                 dataIndex: 'poster',
                 render: (text) => {
                     if (text) {
-                        return <img src={text} alt="" style={{
+                        return <img src={`${baseUrl}${text}`} alt="" style={{
                             width: '100px'
                         }} />
                     } else {

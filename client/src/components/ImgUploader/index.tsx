@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2024-02-04 12:29:03
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-04 16:25:37
+ * @LastEditTime: 2024-02-04 18:42:45
  * @FilePath: /client/src/components/ImgUploader/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,7 +14,7 @@ import { IResponseData, IResponseError } from "../../services/CommonTypes";
 
 interface IImgUploaderProps {
     value?: string
-    onChange: (url: string) => void
+    onChange?: (url: string) => void
 }
 interface IImgState {
     previewVisible: boolean,
@@ -27,7 +27,7 @@ class ImgUploader extends React.Component<IImgUploaderProps, IImgState> {
     // 获取文件数组
     private getFileList(): UploadFile[] {
         if (this.props.value) {
-            const curImgUrl = this.props.value
+            const curImgUrl = baseUrl + this.props.value
             return [
                 {
                     uid: curImgUrl,
@@ -67,12 +67,12 @@ class ImgUploader extends React.Component<IImgUploaderProps, IImgState> {
             // message.error(resp.err)
         } else {
             // 上传成功
-            this.props.onChange(resp.data!)
+            this.props.onChange && this.props.onChange(resp.data!)
         }
     }
     // 图片移除回调
     private handleRemove() {
-        this.props.onChange('')
+        this.props.onChange && this.props.onChange('')
     }
 
     render(): React.ReactNode {
@@ -101,7 +101,7 @@ class ImgUploader extends React.Component<IImgUploaderProps, IImgState> {
                         previewVisible: false
                     })
                 }}>
-                    <img src={this.props.value} alt="" style={{ width: '100%' }} />
+                    <img src={baseUrl + this.props.value} alt="" style={{ width: '100%' }} />
                 </Modal>
             </div>
 
