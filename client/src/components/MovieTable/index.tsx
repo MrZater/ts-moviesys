@@ -2,23 +2,32 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2024-01-31 17:25:45
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-02 15:58:11
+ * @LastEditTime: 2024-02-04 12:24:03
  * @FilePath: /client/src/components/MovieTable/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React from "react";
 import { IMovieState } from "../../redux/reducers/MovieReducers";
-import { Switch, Table, TableColumnProps, Tag, Button, message, Popconfirm, TablePaginationConfig } from 'antd'
+import { Switch, Table, TableColumnProps, Tag, Button, message, Popconfirm, TablePaginationConfig, Input } from 'antd'
 import { IMovie } from "../../services/MovieServices";
 import DefaultPoster from '../../assets/images/defaultposter.png'
 import { SwitchType } from "../../services/CommonTypes";
 import { NavLink } from "react-router-dom";
 import { IRootState } from "../../redux/reducers/RootReducer";
+import { SearchOutlined } from '@ant-design/icons';
 export interface IMovieTableEvents {
+    // 数据加载事件
     onLoad: () => void
+    // 开关事件
     onSwitchChange: (type: SwitchType, newVal: boolean, id: string) => void
+    // 删除事件
     onDelete: (id: string) => Promise<void>
+    // 页码页容量修改事件
     onChange: (newPage: number, newLimit: number, props?: IRootState['movie']) => void
+    // 关键字改变事件
+    onKeyChange: (key: string) => void
+    // 搜索事件
+    onSearch: () => void
 }
 
 class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
@@ -56,6 +65,8 @@ class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
             {
                 title: '电影名称',
                 dataIndex: 'name',
+                filterDropdown: this.getFilterDropDown.bind(this),
+                filterIcon: (<SearchOutlined />)
             },
             {
                 title: '时长',
@@ -140,7 +151,7 @@ class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
             }
         ]
     }
-
+    // 分页器配置
     getPageConfig(): false | TablePaginationConfig {
         if (this.props.data.length === 0) {
             return false
@@ -156,8 +167,40 @@ class MovieTable extends React.Component<IMovieState & IMovieTableEvents> {
             total: this.props.total,
         }
     }
+    // 分页器事件
     handleChange(pagination: TablePaginationConfig) {
-        this.props.onChange(pagination.current!, pagination.pageSize!,this.props)
+        this.props.onChange(pagination.current!, pagination.pageSize!, this.props)
+    }
+    // 重置按钮事件
+    private async handleReset () {
+        // 重置字段
+        this.props.onKeyChange('')
+        // 重新搜索
+        this.props.onSearch()
+    }
+    // 获取名称过滤下拉方法
+    getFilterDropDown(props: object) {
+        return (
+            <div style={{ padding: 8 }}>
+                <Input
+                    value={this.props.condition.key}
+                    onChange={(e) => { this.props.onKeyChange(e.target.value) }}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                    onPressEnter={() => { this.props.onSearch() }}
+                ></Input>
+                <Button
+                    type="primary"
+                    size="small"
+                    style={{ width: 90, marginRight: 8 }}
+                    onClick={() => { this.props.onSearch() }}
+                >搜索</Button>
+                <Button
+                    size="small"
+                    style={{ width: 90 }}
+                    onClick={() => { this.handleReset() }}
+                >重置</Button>
+            </div>
+        )
     }
     render(): React.ReactNode {
         const dataList = this.props.data
