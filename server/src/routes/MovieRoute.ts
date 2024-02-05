@@ -1,3 +1,11 @@
+/*
+ * @Author: zt zhoutao@ydmob.com
+ * @Date: 2023-10-25 14:57:08
+ * @LastEditors: zt zhoutao@ydmob.com
+ * @LastEditTime: 2024-02-05 14:42:39
+ * @FilePath: /ts-moviesys/server/src/routes/MovieRoute.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import Express from 'express';
 import { MovieService } from '../services/MovieServices';
 import { ResponseHelper } from './ResponseHelpers';
@@ -8,7 +16,6 @@ const router = Express.Router()
 router.get('/:id', async (req, res) => {
     try {
         const movieId = req.params.id
-        console.log(movieId)
         const result = await MovieService.findById(movieId)
         ResponseHelper.sendData(result, res)
     } catch (error) {

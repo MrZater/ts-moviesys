@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2024-01-31 12:07:16
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-05 12:44:33
+ * @LastEditTime: 2024-02-05 14:42:01
  * @FilePath: /client/src/pages/Movie/Layout/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,6 +14,7 @@ import AddMovie from "../AddMovie";
 import EditMovie from "../EditMovie";
 import { Layout, Menu, MenuProps } from 'antd'
 import './index.css'
+import { StaticContext } from "react-router";
 const { Header, Sider, Content } = Layout;
 // menu每一项必传
 type MenuItem = Required<MenuProps>['items'][number];
@@ -40,26 +41,36 @@ const items: MenuProps['items'] = [
 ]
 
 class _Layout extends React.Component<RouteComponentProps> {
-    state: {current: string} = {
-        current: '3'
+    state: { current: string } = {
+        current: ''
     }
-    componentWillReceiveProps() {
+    componentDidMount() {
+        this.getCurrent()
+    }
+    componentDidUpdate(prevProps: Readonly<RouteComponentProps<{}, StaticContext, unknown>>, prevState: Readonly<{}>, snapshot?: any): void {
+        if (prevProps.location.pathname !== this.props.location.pathname) {
+            this.getCurrent()
+        }
+    }
+    private getCurrent() {
         const path = this.props.location.pathname
-        if (path === '/'){
-            console.log(123);
+        if (path === '/') {
             this.setState({
                 current: '1'
             })
-        }else if(path === '/movie'){
+        } else if (path === '/movie') {
             this.setState({
                 current: '2'
             })
-        } else if(path === '/movie/add'){
+        } else if (path === '/movie/add') {
             this.setState({
                 current: '3'
             })
+        } else {
+            this.setState({
+                current: ''
+            })
         }
-         
     }
     render() {
         return (<div className="layout-container">
@@ -69,7 +80,7 @@ class _Layout extends React.Component<RouteComponentProps> {
                 </Header>
                 <Layout className="content">
                     <Sider theme="light">
-                        <Menu items={items} defaultSelectedKeys={[this.state.current]} mode="inline" theme="light">
+                        <Menu items={items} selectedKeys={[this.state.current]} mode="inline" theme="light">
                         </Menu>
                     </Sider>
                     <Content>
