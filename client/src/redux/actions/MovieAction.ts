@@ -1,3 +1,4 @@
+import { message } from "antd";
 import { IResponseData, IResponseError, IResponsePageData, ISearchCondition, SwitchType } from "../../services/CommonTypes";
 import { IMovie, MovieServices } from "../../services/MovieServices";
 import { IRootState } from "../reducers/RootReducer";
@@ -148,9 +149,14 @@ function changeSwitch(type: SwitchType, newValue: boolean, id: string)
         // 1. 改变加载状态
         dispatch(setLoadingAction(true))
         dispatch(changeSwitchAction(type, newValue, id))
-        await MovieServices.edit(id, {
+        const resp = await MovieServices.edit(id, {
             [type]: newValue
         })
+        if (resp.err) {
+            message.error(resp.err)
+        } else {
+            message.success('修改成功!')
+        }
         dispatch(setLoadingAction(false))
     }
 

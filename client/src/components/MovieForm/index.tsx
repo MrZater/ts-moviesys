@@ -2,7 +2,7 @@
  * @Author: zt zhoutao@ydmob.com
  * @Date: 2024-02-04 16:30:21
  * @LastEditors: zt zhoutao@ydmob.com
- * @LastEditTime: 2024-02-04 19:06:56
+ * @LastEditTime: 2024-02-05 10:55:30
  * @FilePath: /client/src/components/MovieForm/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,11 +12,10 @@ import { IMovie } from "../../services/MovieServices";
 import ImgUploader from "../ImgUploader";
 import { allAreas, allTypes } from "./options";
 import { RouteComponentProps, withRouter } from "react-router";
-interface IMovieFormProps extends RouteComponentProps{
-    onSubmit: (movie : any) => Promise<string>,
-    form?: IMovie 
+interface IMovieFormProps extends RouteComponentProps {
+    onSubmit: (movie: any) => Promise<string>,
+    movie?: IMovie
 }
-
 const formItemLayout = {
     labelCol: {
         span: 6
@@ -27,11 +26,21 @@ const formItemLayout = {
 }
 
 const Groups = Checkbox.Group
+// 创建form的ref
+let formRef : any = React.createRef()
+
 
 class MovieForm extends React.Component<IMovieFormProps> {
+    // 传参发生改变时触发
+    componentDidUpdate(prevProps: Readonly<IMovieFormProps>, prevState: Readonly<{}>, snapshot?: any): void {
+        if (prevProps.movie !== this.props.movie) {
+            // 设置回显表单
+            formRef.current.setFieldsValue(this.props.movie)
+        }
+    }
     render(): React.ReactNode {
         return (
-            <Form {...formItemLayout} onFinish={async (val) => {
+            <Form ref={formRef} {...formItemLayout} onFinish={async (val) => {
                 const result = await this.props.onSubmit(val)
                 if (result) {
                     message.error(result)
@@ -128,4 +137,4 @@ class MovieForm extends React.Component<IMovieFormProps> {
 
 
 export default withRouter(MovieForm)
-;
+    ;
